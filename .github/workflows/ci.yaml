@@ -31,7 +31,6 @@ jobs:
         with:
           python-version: "3.12"
       - run: |
-          uv venv
           uv pip install -e ".[dev]" mypy
           uv run mypy src/arqera_math --ignore-missing-imports
 
@@ -47,6 +46,5 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: |
-          uv venv
           uv pip install -e ".[dev]"
           uv run pytest tests/ -v --tb=short

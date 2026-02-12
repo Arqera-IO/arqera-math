@@ -15,10 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
       - uses: astral-sh/ruff-action@v3
         with:
-          args: check --select E,F,I,W,UP,B,SIM
+          args: check
       - uses: astral-sh/ruff-action@v3
         with:
           args: format --check
@@ -31,8 +30,10 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           python-version: "3.12"
-      - run: uv pip install --system -e ".[dev]" mypy
-      - run: mypy src/arqera_math --ignore-missing-imports
+      - run: |
+          uv venv
+          uv pip install -e ".[dev]" mypy
+          uv run mypy src/arqera_math --ignore-missing-imports
 
   test:
     name: Test (Python ${{ matrix.python-version }})
@@ -45,5 +46,7 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run: uv pip install --system -e ".[dev]"
-      - run: pytest tests/ -v --tb=short
+      - run: |
+          uv venv
+          uv pip install -e ".[dev]"
+          uv run pytest tests/ -v --tb=short

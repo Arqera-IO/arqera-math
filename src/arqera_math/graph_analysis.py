@@ -204,9 +204,7 @@ class GraphAnalysisService:
         density = total_edges / max_edges if max_edges > 0 else 0.0
 
         by_pagerank = sorted(nodes, key=lambda x: pagerank.get(x, 0), reverse=True)
-        by_centrality = sorted(
-            nodes, key=lambda x: degree_centrality.get(x, 0), reverse=True
-        )
+        by_centrality = sorted(nodes, key=lambda x: degree_centrality.get(x, 0), reverse=True)
 
         return CentralityMetrics(
             total_nodes=n,

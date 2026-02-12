@@ -186,9 +186,7 @@ class BayesianTrustService:
         total = belief.alpha + belief.beta
         belief.mean = belief.alpha / total if total > 0 else 0.5
         belief.variance = (belief.alpha * belief.beta) / (total**2 * (total + 1))
-        belief.lower_95, belief.upper_95 = self.compute_credible_interval(
-            belief.alpha, belief.beta
-        )
+        belief.lower_95, belief.upper_95 = self.compute_credible_interval(belief.alpha, belief.beta)
 
     def get_all_beliefs(self) -> dict[str, BeliefState]:
         return self._beliefs.copy()

@@ -93,15 +93,21 @@ class InformationTheoryService:
     ) -> NodeEntropy:
         if not edge_weights:
             return NodeEntropy(
-                node_id=node_id, node_name=node_name, entropy=0.0,
-                edge_count=0, is_prunable=True,
+                node_id=node_id,
+                node_name=node_name,
+                entropy=0.0,
+                edge_count=0,
+                is_prunable=True,
             )
 
         total = sum(edge_weights)
         if total <= 0:
             return NodeEntropy(
-                node_id=node_id, node_name=node_name, entropy=0.0,
-                edge_count=len(edge_weights), is_prunable=True,
+                node_id=node_id,
+                node_name=node_name,
+                entropy=0.0,
+                edge_count=len(edge_weights),
+                is_prunable=True,
             )
 
         probabilities = [w / total for w in edge_weights]

@@ -7,11 +7,11 @@ Standalone — no external dependencies.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 
-class ConstantDomain(str, Enum):
+class ConstantDomain(StrEnum):
     """Domain/context where constant is used."""
 
     CONDUCTANCE = "conductance"

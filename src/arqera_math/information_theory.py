@@ -191,7 +191,7 @@ class InformationTheoryService:
             edge_weights = node.get("edge_weights", [])
             ne = self.calculate_node_entropy(node.get("id", ""), edge_weights)
             if ne.entropy < threshold:
-                prunable.append((node.get("id"), ne.entropy))
+                prunable.append((node.get("id", ""), ne.entropy))
 
         prunable.sort(key=lambda x: x[1])
         max_prune = int(len(nodes) * max_prunable_ratio)

@@ -5,9 +5,12 @@ Extracted from ARQERA's engine for reuse across projects:
 - Graph Analysis (PageRank, centrality, clustering)
 - Information Theory (Shannon entropy, pruning)
 - Constants Registry (tuned mathematical constants)
+- Control Theory (PID controllers, self-healing feedback loops)
 - Decision Theory (weighted scoring, sensitivity analysis)
+- Game Theory (resource auctions, conflict resolution)
 - Temporal Dynamics (trust forecasting, anomaly detection, trend analysis)
 - Multi-Objective Optimization (Pareto frontier, dominance, weighted sum)
+- Queueing Theory (M/M/1, M/M/c queue analysis)
 """
 
 from arqera_math.bayesian import (
@@ -26,6 +29,12 @@ from arqera_math.constants import (
     list_constants_by_domain,
     validate_constant_update,
 )
+from arqera_math.control_theory import (
+    ControlAction,
+    ControllerState,
+    PIDController,
+    simple_pid_step,
+)
 from arqera_math.decision_theory import (
     DecisionCriterion,
     DecisionMatrix,
@@ -33,6 +42,12 @@ from arqera_math.decision_theory import (
     DecisionResult,
     decision_rank,
     weighted_score,
+)
+from arqera_math.game_theory import (
+    AuctionResult,
+    ResourceAuction,
+    ResourceClaim,
+    create_claim,
 )
 from arqera_math.graph_analysis import (
     CentralityMetrics,
@@ -55,6 +70,11 @@ from arqera_math.multi_objective import (
     dominates,
     pareto_frontier,
     weighted_sum,
+)
+from arqera_math.queueing import (
+    AgentQueue,
+    QueueingService,
+    QueueMetrics,
 )
 from arqera_math.temporal_dynamics import (
     TrendAnalysis,
@@ -80,6 +100,11 @@ __all__ = [
     "get_constant_info",
     "list_constants_by_domain",
     "validate_constant_update",
+    # Control Theory
+    "ControlAction",
+    "ControllerState",
+    "PIDController",
+    "simple_pid_step",
     # Decision Theory
     "DecisionCriterion",
     "DecisionMatrix",
@@ -87,6 +112,11 @@ __all__ = [
     "DecisionResult",
     "decision_rank",
     "weighted_score",
+    # Game Theory
+    "AuctionResult",
+    "ResourceAuction",
+    "ResourceClaim",
+    "create_claim",
     # Graph Analysis
     "CentralityMetrics",
     "GraphAnalysisService",
@@ -106,6 +136,10 @@ __all__ = [
     "dominates",
     "pareto_frontier",
     "weighted_sum",
+    # Queueing Theory
+    "AgentQueue",
+    "QueueingService",
+    "QueueMetrics",
     # Temporal Dynamics
     "TrendAnalysis",
     "TrendPoint",

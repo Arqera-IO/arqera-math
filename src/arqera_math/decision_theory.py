@@ -114,13 +114,15 @@ class DecisionMatrix:
                 criterion_scores[name] = weighted
                 total += weighted
 
-            results.append(DecisionResult(
-                option_name=option.name,
-                weighted_score=total,
-                criterion_scores=criterion_scores,
-                rank=0,
-                measured_at=now,
-            ))
+            results.append(
+                DecisionResult(
+                    option_name=option.name,
+                    weighted_score=total,
+                    criterion_scores=criterion_scores,
+                    rank=0,
+                    measured_at=now,
+                )
+            )
 
         # Sort descending by score, assign ranks
         results.sort(key=lambda r: r.weighted_score, reverse=True)
@@ -159,28 +161,27 @@ class DecisionMatrix:
 
         for test_weight in test_weights:
             remaining = 1.0 - test_weight
-            other_total = sum(
-                c.weight for c in criteria if c.name != vary_criterion
-            )
+            other_total = sum(c.weight for c in criteria if c.name != vary_criterion)
 
             modified: list[DecisionCriterion] = []
             for c in criteria:
                 if c.name == vary_criterion:
-                    modified.append(DecisionCriterion(
-                        name=c.name,
-                        weight=test_weight,
-                        minimize=c.minimize,
-                    ))
-                else:
-                    scaled = (
-                        (c.weight / other_total * remaining)
-                        if other_total > 0 else 0.0
+                    modified.append(
+                        DecisionCriterion(
+                            name=c.name,
+                            weight=test_weight,
+                            minimize=c.minimize,
+                        )
                     )
-                    modified.append(DecisionCriterion(
-                        name=c.name,
-                        weight=scaled,
-                        minimize=c.minimize,
-                    ))
+                else:
+                    scaled = (c.weight / other_total * remaining) if other_total > 0 else 0.0
+                    modified.append(
+                        DecisionCriterion(
+                            name=c.name,
+                            weight=scaled,
+                            minimize=c.minimize,
+                        )
+                    )
 
             results = self.evaluate(modified, options)
             for r in results:
@@ -214,10 +215,7 @@ def decision_rank(
         )
         for c in criteria
     ]
-    parsed_options = [
-        DecisionOption(name=o["name"], scores=o["scores"])
-        for o in options
-    ]
+    parsed_options = [DecisionOption(name=o["name"], scores=o["scores"]) for o in options]
 
     matrix = DecisionMatrix()
     results = matrix.evaluate(parsed_criteria, parsed_options)
@@ -239,7 +237,4 @@ def weighted_score(
     Returns:
         Weighted sum as float.
     """
-    return sum(
-        scores.get(k, 0.0) * weights.get(k, 0.0)
-        for k in scores
-    )
+    return sum(scores.get(k, 0.0) * weights.get(k, 0.0) for k in scores)

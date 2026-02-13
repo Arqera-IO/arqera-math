@@ -100,12 +100,14 @@ def pareto_frontier(
             if dominates(obj_i, obj_j, minimize):
                 dom_count += 1
 
-        pareto_points.append(ParetoPoint(
-            name=name_i,
-            objectives=dict(obj_i),
-            is_pareto_optimal=False,
-            dominance_count=dom_count,
-        ))
+        pareto_points.append(
+            ParetoPoint(
+                name=name_i,
+                objectives=dict(obj_i),
+                is_pareto_optimal=False,
+                dominance_count=dom_count,
+            )
+        )
 
     # Determine Pareto optimality: not dominated by any other point
     for i, pp in enumerate(pareto_points):

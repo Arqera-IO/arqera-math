@@ -59,12 +59,8 @@ def test_evaluate_empty_inputs():
     """evaluate returns empty list for empty criteria or options."""
     matrix = DecisionMatrix()
     assert matrix.evaluate([], []) == []
-    assert matrix.evaluate(
-        [DecisionCriterion(name="x", weight=1.0)], []
-    ) == []
-    assert matrix.evaluate(
-        [], [DecisionOption(name="A", scores={"x": 1})]
-    ) == []
+    assert matrix.evaluate([DecisionCriterion(name="x", weight=1.0)], []) == []
+    assert matrix.evaluate([], [DecisionOption(name="A", scores={"x": 1})]) == []
 
 
 def test_sensitivity_analysis_structure():

@@ -118,9 +118,7 @@ def forecast_trust(
             forecast_horizon_days=horizon_days,
         )
 
-    slope, intercept, r_squared = linear_trend(
-        list(zip(timestamps, values, strict=True))
-    )
+    slope, intercept, r_squared = linear_trend(list(zip(timestamps, values, strict=True)))
 
     # Forecast at last_timestamp + horizon
     last_t = timestamps[-1]
@@ -183,10 +181,7 @@ def detect_anomaly(
     if std == 0.0:
         return []
 
-    return [
-        i for i, v in enumerate(values)
-        if abs(v - mean) > threshold_sigma * std
-    ]
+    return [i for i, v in enumerate(values) if abs(v - mean) > threshold_sigma * std]
 
 
 def linear_trend(
@@ -214,7 +209,7 @@ def linear_trend(
     sum_xy = sum(x * y for x, y in points)
     sum_x2 = sum(x * x for x in xs)
 
-    denominator = n * sum_x2 - sum_x ** 2
+    denominator = n * sum_x2 - sum_x**2
     if denominator == 0:
         return 0.0, sum_y / n, 0.0
 

@@ -1,9 +1,9 @@
 """ARQERA Mathematical Foundations.
 
 Extracted from ARQERA's engine for reuse across projects:
-- Bayesian Inference (Beta-binomial trust model)
+- Bayesian Inference (Beta-binomial trust model, Fisher information)
 - Graph Analysis (PageRank, centrality, clustering)
-- Information Theory (Shannon entropy, pruning)
+- Information Theory (Shannon entropy, Renyi entropy, KL divergence, pruning)
 - Constants Registry (tuned mathematical constants)
 - Control Theory (PID controllers, self-healing feedback loops)
 - Decision Theory (weighted scoring, sensitivity analysis)
@@ -11,13 +11,19 @@ Extracted from ARQERA's engine for reuse across projects:
 - Temporal Dynamics (trust forecasting, anomaly detection, trend analysis)
 - Multi-Objective Optimization (Pareto frontier, dominance, weighted sum)
 - Queueing Theory (M/M/1, M/M/c queue analysis)
+- Stigmergy (pheromone-based route optimization)
+- Quorum Sensing (biological threshold functions)
+- Lyapunov Stability (convergence verification)
 """
 
 from arqera_math.bayesian import (
     BayesianTrustService,
     BeliefState,
+    FisherInformationResult,
     TrustUpdate,
     bayesian_update,
+    cramer_rao_bound,
+    fisher_information,
     trust_from_evidence,
 )
 from arqera_math.constants import (
@@ -59,9 +65,14 @@ from arqera_math.graph_analysis import (
 from arqera_math.information_theory import (
     EntropyMetrics,
     InformationTheoryService,
+    KLDivergenceResult,
     NodeEntropy,
+    RenyiEntropyResult,
+    beta_kl_divergence,
     binary_entropy,
     entropy,
+    kl_divergence,
+    renyi_entropy,
 )
 from arqera_math.multi_objective import (
     ObjectiveWeight,
@@ -71,10 +82,33 @@ from arqera_math.multi_objective import (
     pareto_frontier,
     weighted_sum,
 )
+from arqera_math.preconditions import (
+    PreconditionProfile,
+    compute_domain_priors,
+    compute_entity_prior,
+)
 from arqera_math.queueing import (
     AgentQueue,
     QueueingService,
     QueueMetrics,
+)
+from arqera_math.quorum_sensing import (
+    QuorumResponse,
+    QuorumSensingService,
+    hill_function,
+)
+from arqera_math.stability import (
+    StabilityAnalysis,
+    StabilityService,
+    check_stability,
+    lyapunov_function,
+)
+from arqera_math.stigmergy import (
+    PheromoneTrail,
+    StigmergyMetrics,
+    StigmergyService,
+    pheromone_gradient,
+    update_pheromone,
 )
 from arqera_math.temporal_dynamics import (
     TrendAnalysis,
@@ -89,8 +123,11 @@ __all__ = [
     # Bayesian
     "BayesianTrustService",
     "BeliefState",
+    "FisherInformationResult",
     "TrustUpdate",
     "bayesian_update",
+    "cramer_rao_bound",
+    "fisher_information",
     "trust_from_evidence",
     # Constants
     "MATH_CONSTANTS",
@@ -126,9 +163,14 @@ __all__ = [
     # Information Theory
     "EntropyMetrics",
     "InformationTheoryService",
+    "KLDivergenceResult",
     "NodeEntropy",
+    "RenyiEntropyResult",
+    "beta_kl_divergence",
     "binary_entropy",
     "entropy",
+    "kl_divergence",
+    "renyi_entropy",
     # Multi-Objective
     "ObjectiveWeight",
     "ParetoPoint",
@@ -136,10 +178,29 @@ __all__ = [
     "dominates",
     "pareto_frontier",
     "weighted_sum",
+    # Preconditions
+    "PreconditionProfile",
+    "compute_domain_priors",
+    "compute_entity_prior",
+    # Quorum Sensing
+    "QuorumResponse",
+    "QuorumSensingService",
+    "hill_function",
     # Queueing Theory
     "AgentQueue",
     "QueueingService",
     "QueueMetrics",
+    # Stability
+    "StabilityAnalysis",
+    "StabilityService",
+    "check_stability",
+    "lyapunov_function",
+    # Stigmergy
+    "PheromoneTrail",
+    "StigmergyMetrics",
+    "StigmergyService",
+    "pheromone_gradient",
+    "update_pheromone",
     # Temporal Dynamics
     "TrendAnalysis",
     "TrendPoint",

@@ -69,6 +69,132 @@ class EntropyMetrics:
         }
 
 
+@dataclass
+class RenyiEntropyResult:
+    """Result of Renyi entropy calculation."""
+
+    entropy: float = 0.0
+    alpha: float = 2.0
+    special_case: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "entropy": self.entropy,
+            "alpha": self.alpha,
+            "special_case": self.special_case,
+        }
+
+
+@dataclass
+class KLDivergenceResult:
+    """Result of KL divergence calculation."""
+
+    divergence: float = 0.0
+    is_finite: bool = True
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "divergence": self.divergence,
+            "is_finite": self.is_finite,
+        }
+
+
+def renyi_entropy(probabilities: list[float], alpha: float = 2.0) -> float:
+    """Calculate Renyi entropy of order alpha.
+
+    H_alpha(X) = 1/(1-alpha) * log2(sum(p_i^alpha))
+
+    Special cases:
+    - alpha -> 0: Hartley entropy = log2(|support|)
+    - alpha = 1: Shannon entropy (limit)
+    - alpha = 2: Collision entropy
+    - alpha -> inf: Min-entropy = -log2(max(p))
+    """
+    if not probabilities:
+        return 0.0
+
+    # Filter to positive probabilities
+    probs = [p for p in probabilities if p > 0]
+    if not probs:
+        return 0.0
+
+    # Hartley entropy: alpha -> 0
+    if alpha <= 0:
+        return math.log2(len(probs))
+
+    # Shannon entropy: alpha = 1 (limit case)
+    if abs(alpha - 1.0) < 1e-10:
+        return -sum(p * math.log2(p) for p in probs)
+
+    # Min-entropy: alpha -> infinity
+    if alpha > 1e6:
+        return -math.log2(max(probs))
+
+    # General Renyi entropy
+    power_sum = sum(p**alpha for p in probs)
+    if power_sum <= 0:
+        return 0.0
+    return math.log2(power_sum) / (1 - alpha)
+
+
+def kl_divergence(p: list[float], q: list[float]) -> float:
+    """Calculate KL divergence D_KL(P || Q).
+
+    D_KL(P || Q) = sum(P(x) * log2(P(x) / Q(x)))
+
+    Returns inf when absolute continuity is violated (Q(x)=0 where P(x)>0).
+    """
+    if len(p) != len(q):
+        raise ValueError(
+            f"Distributions must have same length: {len(p)} vs {len(q)}"
+        )
+
+    divergence = 0.0
+    for pi, qi in zip(p, q, strict=True):
+        if pi > 0:
+            if qi <= 0:
+                return float("inf")
+            divergence += pi * math.log2(pi / qi)
+    return divergence
+
+
+def beta_kl_divergence(
+    alpha1: float, beta1: float, alpha2: float, beta2: float
+) -> float:
+    """KL divergence between two Beta distributions using log-gamma.
+
+    D_KL(Beta(a1,b1) || Beta(a2,b2)) =
+        ln B(a2,b2) - ln B(a1,b1)
+        + (a1-a2)*psi(a1) + (b1-b2)*psi(b1)
+        + (a2-b2+b2-a1+a1-b1)*psi(a1+b1)
+
+    Uses finite differences of lgamma to approximate the digamma function.
+    """
+    # ln B(a,b) = lgamma(a) + lgamma(b) - lgamma(a+b)
+    def log_beta(a: float, b: float) -> float:
+        return math.lgamma(a) + math.lgamma(b) - math.lgamma(a + b)
+
+    # Approximate digamma via finite difference: psi(x) ~ lgamma(x+h) - lgamma(x) / h
+    h = 1e-8
+
+    def digamma(x: float) -> float:
+        return (math.lgamma(x + h) - math.lgamma(x)) / h
+
+    lb1 = log_beta(alpha1, beta1)
+    lb2 = log_beta(alpha2, beta2)
+
+    psi_a1 = digamma(alpha1)
+    psi_b1 = digamma(beta1)
+    psi_ab1 = digamma(alpha1 + beta1)
+
+    return (
+        lb2 - lb1
+        + (alpha1 - alpha2) * psi_a1
+        + (beta1 - beta2) * psi_b1
+        + (alpha2 + beta2 - alpha1 - beta1) * psi_ab1
+    )
+
+
 class InformationTheoryService:
     """Service for information-theoretic analysis.
 
@@ -196,6 +322,41 @@ class InformationTheoryService:
         prunable.sort(key=lambda x: x[1])
         max_prune = int(len(nodes) * max_prunable_ratio)
         return [nid for nid, _ in prunable[:max_prune]]
+
+
+    def calculate_renyi_entropy(
+        self,
+        probabilities: list[float],
+        alpha: float = 2.0,
+    ) -> RenyiEntropyResult:
+        """Calculate Renyi entropy and classify the special case."""
+        ent = renyi_entropy(probabilities, alpha)
+
+        special_case = ""
+        if alpha <= 0:
+            special_case = "hartley"
+        elif abs(alpha - 1.0) < 1e-10:
+            special_case = "shannon"
+        elif abs(alpha - 2.0) < 1e-10:
+            special_case = "collision"
+        elif alpha > 1e6:
+            special_case = "min_entropy"
+
+        return RenyiEntropyResult(
+            entropy=ent, alpha=alpha, special_case=special_case
+        )
+
+    def calculate_kl_divergence(
+        self,
+        p: list[float],
+        q: list[float],
+    ) -> KLDivergenceResult:
+        """Calculate KL divergence between two distributions."""
+        div = kl_divergence(p, q)
+        return KLDivergenceResult(
+            divergence=div,
+            is_finite=not math.isinf(div),
+        )
 
 
 def entropy(probabilities: list[float]) -> float:

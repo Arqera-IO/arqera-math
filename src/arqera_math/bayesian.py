@@ -81,6 +81,54 @@ class TrustUpdate:
         }
 
 
+@dataclass
+class FisherInformationResult:
+    """Fisher information analysis for a Beta-distributed trust estimate."""
+
+    alpha: float = 0.0
+    beta: float = 0.0
+    fisher_information: float = 0.0
+    cramer_rao_bound: float = 0.0
+    sample_size: int = 0
+    precision: float = 0.0
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "alpha": self.alpha,
+            "beta": self.beta,
+            "fisher_information": self.fisher_information,
+            "cramer_rao_bound": self.cramer_rao_bound,
+            "sample_size": self.sample_size,
+            "precision": self.precision,
+        }
+
+
+def fisher_information(alpha: float, beta: float) -> float:
+    """Compute Fisher information for a Bernoulli likelihood with Beta prior.
+
+    I(theta) = n / (theta * (1 - theta))
+    where theta = alpha / (alpha + beta) and n = alpha + beta.
+    """
+    n = alpha + beta
+    if n <= 0:
+        return 0.0
+    theta = alpha / n
+    if theta <= 0 or theta >= 1:
+        return 0.0
+    return n / (theta * (1 - theta))
+
+
+def cramer_rao_bound(alpha: float, beta: float) -> float:
+    """Compute Cramer-Rao lower bound on variance of trust estimator.
+
+    CRB = 1 / I(theta) = theta * (1 - theta) / n
+    """
+    fi = fisher_information(alpha, beta)
+    if fi <= 0:
+        return float("inf")
+    return 1.0 / fi
+
+
 class BayesianTrustService:
     """Service for Bayesian trust management.
 
@@ -187,6 +235,27 @@ class BayesianTrustService:
         belief.mean = belief.alpha / total if total > 0 else 0.5
         belief.variance = (belief.alpha * belief.beta) / (total**2 * (total + 1))
         belief.lower_95, belief.upper_95 = self.compute_credible_interval(belief.alpha, belief.beta)
+
+    def compute_fisher_information(
+        self, entity_id: str
+    ) -> FisherInformationResult | None:
+        """Compute Fisher information for an entity's trust estimate."""
+        belief = self._beliefs.get(entity_id)
+        if not belief:
+            return None
+
+        fi = fisher_information(belief.alpha, belief.beta)
+        crb = cramer_rao_bound(belief.alpha, belief.beta)
+        n = belief.alpha + belief.beta
+
+        return FisherInformationResult(
+            alpha=belief.alpha,
+            beta=belief.beta,
+            fisher_information=fi,
+            cramer_rao_bound=crb,
+            sample_size=int(n),
+            precision=fi if fi > 0 else 0.0,
+        )
 
     def get_all_beliefs(self) -> dict[str, BeliefState]:
         return self._beliefs.copy()

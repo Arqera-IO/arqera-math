@@ -24,6 +24,8 @@ class ConstantDomain(StrEnum):
     TRUST = "trust"
     QUEUEING = "queueing"
     BAYESIAN = "bayesian"
+    STIGMERGY = "stigmergy"
+    STABILITY = "stability"
 
 
 @dataclass
@@ -205,6 +207,105 @@ MATH_CONSTANTS: dict[str, MathConstant] = {
         description="Strength of prior belief (pseudo-count)",
         min_value=1.0,
         max_value=100.0,
+    ),
+    # Precondition weights
+    "PRECONDITION_AGE_WEIGHT": MathConstant(
+        name="PRECONDITION_AGE_WEIGHT",
+        value=0.15,
+        domain=ConstantDomain.BAYESIAN,
+        description="Weight of age in precondition prior computation",
+        min_value=0.0,
+        max_value=1.0,
+        reference="Precondition system: demographic-informed priors",
+    ),
+    "PRECONDITION_PROFESSION_WEIGHT": MathConstant(
+        name="PRECONDITION_PROFESSION_WEIGHT",
+        value=0.25,
+        domain=ConstantDomain.BAYESIAN,
+        description="Weight of profession in precondition prior computation",
+        min_value=0.0,
+        max_value=1.0,
+        reference="Precondition system: demographic-informed priors",
+    ),
+    "PRECONDITION_CULTURAL_WEIGHT": MathConstant(
+        name="PRECONDITION_CULTURAL_WEIGHT",
+        value=0.10,
+        domain=ConstantDomain.BAYESIAN,
+        description="Weight of cultural context in precondition prior computation",
+        min_value=0.0,
+        max_value=1.0,
+        reference="Precondition system: demographic-informed priors",
+    ),
+    # Stigmergy
+    "STIGMERGY_EVAPORATION_RATE": MathConstant(
+        name="STIGMERGY_EVAPORATION_RATE",
+        value=0.1,
+        domain=ConstantDomain.STIGMERGY,
+        description="Pheromone evaporation rate (rho) per time step",
+        min_value=0.01,
+        max_value=0.5,
+        reference="Ant colony optimization: tau(t+1) = (1-rho)*tau(t) + deposit",
+    ),
+    "PHEROMONE_MIN": MathConstant(
+        name="PHEROMONE_MIN",
+        value=0.01,
+        domain=ConstantDomain.STIGMERGY,
+        description="Minimum pheromone intensity",
+        min_value=0.001,
+        max_value=0.1,
+    ),
+    "PHEROMONE_MAX": MathConstant(
+        name="PHEROMONE_MAX",
+        value=10.0,
+        domain=ConstantDomain.STIGMERGY,
+        description="Maximum pheromone intensity",
+        min_value=5.0,
+        max_value=100.0,
+    ),
+    # Quorum Sensing
+    "QUORUM_HILL_COEFFICIENT": MathConstant(
+        name="QUORUM_HILL_COEFFICIENT",
+        value=2.0,
+        domain=ConstantDomain.BAYESIAN,
+        description="Hill function cooperativity coefficient (n)",
+        min_value=1.0,
+        max_value=10.0,
+        reference="Hill equation: R(S) = S^n / (K^n + S^n)",
+    ),
+    "QUORUM_THRESHOLD": MathConstant(
+        name="QUORUM_THRESHOLD",
+        value=0.5,
+        domain=ConstantDomain.BAYESIAN,
+        description="Hill function half-maximum threshold (K)",
+        min_value=0.01,
+        max_value=1.0,
+        reference="Hill equation: R(K) = 0.5 by definition",
+    ),
+    "QUORUM_ACTIVATION_THRESHOLD": MathConstant(
+        name="QUORUM_ACTIVATION_THRESHOLD",
+        value=0.8,
+        domain=ConstantDomain.BAYESIAN,
+        description="Response level for quorum activation",
+        min_value=0.5,
+        max_value=0.99,
+    ),
+    # Lyapunov Stability
+    "LYAPUNOV_CONVERGENCE_THRESHOLD": MathConstant(
+        name="LYAPUNOV_CONVERGENCE_THRESHOLD",
+        value=1e-4,
+        domain=ConstantDomain.STABILITY,
+        description="Threshold for Lyapunov derivative convergence",
+        min_value=1e-8,
+        max_value=1e-2,
+        reference="Lyapunov stability: V_dot < threshold implies stable",
+    ),
+    "LYAPUNOV_WINDOW_SIZE": MathConstant(
+        name="LYAPUNOV_WINDOW_SIZE",
+        value=10,
+        domain=ConstantDomain.STABILITY,
+        description="State samples for stability analysis",
+        min_value=3,
+        max_value=100,
     ),
 }
 

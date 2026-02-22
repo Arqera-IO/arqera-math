@@ -1,10 +1,13 @@
 """ARQERA Mathematical Foundations.
 
-Extracted from ARQERA's engine for reuse across projects:
+Mathematical foundations for AI governance -- 9 algorithms, 14 modules,
+74 exports, 27 tuned constants. Pure Python. Zero dependencies.
+
+Modules:
 - Bayesian Inference (Beta-binomial trust model, Fisher information)
 - Graph Analysis (PageRank, centrality, clustering)
-- Information Theory (Shannon entropy, Renyi entropy, KL divergence, pruning)
-- Constants Registry (tuned mathematical constants)
+- Information Theory (Shannon entropy, Renyi entropy, KL divergence)
+- Constants Registry (tuned mathematical constants with bounds validation)
 - Control Theory (PID controllers, self-healing feedback loops)
 - Decision Theory (weighted scoring, sensitivity analysis)
 - Game Theory (resource auctions, conflict resolution)
@@ -14,7 +17,12 @@ Extracted from ARQERA's engine for reuse across projects:
 - Stigmergy (pheromone-based route optimization)
 - Quorum Sensing (biological threshold functions)
 - Lyapunov Stability (convergence verification)
+- Preconditions (demographic-informed Bayesian priors)
+
+https://github.com/Arqera-IO/arqera-math
 """
+
+__version__ = "0.1.0"
 
 from arqera_math.bayesian import (
     BayesianTrustService,
@@ -120,6 +128,7 @@ from arqera_math.temporal_dynamics import (
 )
 
 __all__ = [
+    "__version__",
     # Bayesian
     "BayesianTrustService",
     "BeliefState",

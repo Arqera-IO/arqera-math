@@ -1,24 +1,25 @@
 # arqera-math
 
-Mathematical foundations for AI governance. 9 algorithms, 14 modules, 74 exports, 27 tuned constants. Pure Python. Zero dependencies.
+[![CI](https://github.com/Arqera-IO/arqera-math/actions/workflows/ci.yaml/badge.svg)](https://github.com/Arqera-IO/arqera-math/actions/workflows/ci.yaml)
+[![PyPI](https://img.shields.io/pypi/v/arqera-math.svg)](https://pypi.org/project/arqera-math/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+
+**Mathematical foundations for AI governance.** 9 algorithms, 14 modules, 74 exports, 27 tuned constants. Pure Python. Zero dependencies.
 
 Built by [ARQERA](https://arqera.io) for production AI systems that need trust scoring, decision analysis, and self-organizing behaviour.
 
-## Algorithms
+---
 
-| Module | What it does |
-|--------|-------------|
-| **Bayesian Inference** | Beta-binomial trust model with Fisher information and Cramer-Rao bounds |
-| **Graph Analysis** | PageRank, degree/betweenness centrality, clustering coefficients, HITS |
-| **Information Theory** | Shannon entropy, Renyi entropy, KL divergence, Beta-KL divergence |
-| **Decision Theory** | Weighted multi-criteria decision matrices with sensitivity analysis |
-| **Multi-Objective Optimization** | Pareto frontier extraction, dominance checking, weighted sum scalarization |
-| **Stigmergy** | Pheromone-based route optimization (ant colony style) |
-| **Quorum Sensing** | Hill function biological threshold curves for collective activation |
-| **Stability Analysis** | Lyapunov functions and convergence verification |
-| **Temporal Dynamics** | Trust forecasting, anomaly detection, linear trend analysis |
+## Why arqera-math?
 
-Plus: control theory (PID controllers), game theory (resource auctions), queueing theory (M/M/1, M/M/c), preconditions (demographic-informed Bayesian priors), and a constants registry with bounds validation.
+Most AI governance libraries depend on NumPy, SciPy, or TensorFlow. arqera-math is different:
+
+- **Zero dependencies.** Pure Python stdlib. No binary wheels. No version conflicts. Runs anywhere Python runs.
+- **Typed dataclasses everywhere.** Every return value is a `@dataclass` with full type annotations. No raw dicts.
+- **Deterministic.** No randomness without explicit seeds. Every function is reproducible.
+- **Self-contained modules.** Each module covers one mathematical domain. No circular imports.
+- **Tested.** 105 tests covering 100% of the public API.
 
 ## Install
 
@@ -26,7 +27,7 @@ Plus: control theory (PID controllers), game theory (resource auctions), queuein
 pip install arqera-math
 ```
 
-Python 3.10+ required. No dependencies to install -- it is pure stdlib Python.
+Requires Python 3.11+. No dependencies to install -- it is pure stdlib Python.
 
 ## Quick Start
 
@@ -61,6 +62,42 @@ score = trust_from_evidence(positive=8, negative=2)
 print(f"Trust from evidence: {score:.3f}")  # ~0.650
 ```
 
+### PageRank and Graph Analysis
+
+Compute node importance in directed graphs using iterative PageRank.
+
+```python
+from arqera_math import simple_pagerank
+
+# Adjacency list: node -> list of nodes it points to
+graph = {
+    "A": ["B", "C"],
+    "B": ["C"],
+    "C": ["A"],
+    "D": ["C"],
+}
+
+ranks = simple_pagerank(graph, damping=0.85, iterations=100)
+for node, rank in sorted(ranks.items(), key=lambda x: -x[1]):
+    print(f"  {node}: {rank:.4f}")
+```
+
+### Information Theory
+
+Measure uncertainty, divergence, and information content.
+
+```python
+from arqera_math import entropy, kl_divergence
+
+# Shannon entropy of a probability distribution
+h = entropy([0.5, 0.3, 0.2])
+print(f"Shannon entropy: {h:.4f} bits")
+
+# KL divergence between two distributions
+d = kl_divergence([0.5, 0.3, 0.2], [0.33, 0.33, 0.34])
+print(f"KL divergence: {d:.4f}")
+```
+
 ### Physarum / Stigmergy Dynamics
 
 Pheromone-based route optimization. Successful paths get reinforced, unused paths decay.
@@ -88,7 +125,6 @@ Score options across multiple weighted criteria.
 ```python
 from arqera_math import decision_rank
 
-# Define criteria and options as plain dicts
 criteria = [
     {"name": "accuracy", "weight": 0.5},
     {"name": "latency", "weight": 0.3, "minimize": True},
@@ -105,6 +141,22 @@ ranked = decision_rank(criteria, options)
 for result in ranked:
     print(f"  #{result['rank']}: {result['option_name']} (score: {result['weighted_score']:.3f})")
 ```
+
+## Algorithms
+
+| Module | What it does |
+|--------|-------------|
+| **Bayesian Inference** | Beta-binomial trust model with Fisher information and Cramer-Rao bounds |
+| **Graph Analysis** | PageRank, degree/betweenness centrality, clustering coefficients, HITS |
+| **Information Theory** | Shannon entropy, Renyi entropy, KL divergence, Beta-KL divergence |
+| **Decision Theory** | Weighted multi-criteria decision matrices with sensitivity analysis |
+| **Multi-Objective Optimization** | Pareto frontier extraction, dominance checking, weighted sum scalarization |
+| **Stigmergy** | Pheromone-based route optimization (ant colony style) |
+| **Quorum Sensing** | Hill function biological threshold curves for collective activation |
+| **Stability Analysis** | Lyapunov functions and convergence verification |
+| **Temporal Dynamics** | Trust forecasting, anomaly detection, linear trend analysis |
+
+Plus: control theory (PID controllers), game theory (resource auctions), queueing theory (M/M/1, M/M/c), preconditions (demographic-informed Bayesian priors), and a constants registry with bounds validation.
 
 ## All Exports
 
@@ -160,13 +212,11 @@ for c in entropy_constants:
     print(f"  {c.name} = {c.value} (range: {c.min_value}..{c.max_value})")
 ```
 
-## Design Principles
+## Used by ARQERA
 
-- **Zero dependencies.** Pure Python stdlib. No numpy, no scipy, no pandas. Runs anywhere Python runs.
-- **Typed dataclasses.** Every structured return value is a `@dataclass` with type annotations. No raw dicts.
-- **Deterministic.** No randomness without explicit seeds. Every function is reproducible.
-- **Self-contained modules.** Each module covers one mathematical domain. No circular imports.
-- **Tested.** 105 tests, 100% of public API covered.
+arqera-math powers the mathematical engine behind [ARQERA](https://arqera.io), an AI operations platform for enterprise governance, trust scoring, and autonomous decision-making.
+
+Every algorithm in this library is battle-tested in production: Bayesian trust updates run on live agent evaluations, PageRank scores real dependency graphs, and Physarum dynamics route actual AI workloads.
 
 ## Development
 

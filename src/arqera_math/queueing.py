@@ -119,9 +119,7 @@ class QueueingService:
                 arrival_rate=arrival_rate,
                 service_rate=service_rate,
                 num_servers=1,
-                utilization=(
-                    arrival_rate / service_rate if service_rate > 0 else float("inf")
-                ),
+                utilization=(arrival_rate / service_rate if service_rate > 0 else float("inf")),
                 avg_queue_length=float("inf"),
                 avg_wait_time=float("inf"),
                 is_stable=False,
@@ -183,31 +181,21 @@ class QueueingService:
         a = arrival_rate / service_rate  # Offered load
 
         # P(0) calculation
-        sum_term = sum(
-            (a**n) / math.factorial(n) for n in range(num_servers)
-        )
-        last_term = (a**num_servers) / (
-            math.factorial(num_servers) * (1 - rho)
-        )
+        sum_term = sum((a**n) / math.factorial(n) for n in range(num_servers))
+        last_term = (a**num_servers) / (math.factorial(num_servers) * (1 - rho))
         p0 = 1 / (sum_term + last_term)
 
         # P(wait)
-        p_wait = (
-            ((a**num_servers) / math.factorial(num_servers)) * p0 / (1 - rho)
-        )
+        p_wait = ((a**num_servers) / math.factorial(num_servers)) * p0 / (1 - rho)
 
         # Average queue length
-        avg_length = (
-            p_wait * rho / (1 - rho) if rho < 1 else float("inf")
-        )
+        avg_length = p_wait * rho / (1 - rho) if rho < 1 else float("inf")
 
         # Average wait time
         avg_wait = avg_length / arrival_rate if arrival_rate > 0 else 0
 
         # Average system time
-        avg_system = (
-            avg_wait + (1 / service_rate) if service_rate > 0 else float("inf")
-        )
+        avg_system = avg_wait + (1 / service_rate) if service_rate > 0 else float("inf")
 
         return QueueMetrics(
             queue_name=f"M/M/{num_servers}",

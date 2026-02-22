@@ -236,9 +236,7 @@ class BayesianTrustService:
         belief.variance = (belief.alpha * belief.beta) / (total**2 * (total + 1))
         belief.lower_95, belief.upper_95 = self.compute_credible_interval(belief.alpha, belief.beta)
 
-    def compute_fisher_information(
-        self, entity_id: str
-    ) -> FisherInformationResult | None:
+    def compute_fisher_information(self, entity_id: str) -> FisherInformationResult | None:
         """Compute Fisher information for an entity's trust estimate."""
         belief = self._beliefs.get(entity_id)
         if not belief:

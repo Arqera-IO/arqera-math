@@ -145,9 +145,7 @@ def kl_divergence(p: list[float], q: list[float]) -> float:
     Returns inf when absolute continuity is violated (Q(x)=0 where P(x)>0).
     """
     if len(p) != len(q):
-        raise ValueError(
-            f"Distributions must have same length: {len(p)} vs {len(q)}"
-        )
+        raise ValueError(f"Distributions must have same length: {len(p)} vs {len(q)}")
 
     divergence = 0.0
     for pi, qi in zip(p, q, strict=True):
@@ -158,9 +156,7 @@ def kl_divergence(p: list[float], q: list[float]) -> float:
     return divergence
 
 
-def beta_kl_divergence(
-    alpha1: float, beta1: float, alpha2: float, beta2: float
-) -> float:
+def beta_kl_divergence(alpha1: float, beta1: float, alpha2: float, beta2: float) -> float:
     """KL divergence between two Beta distributions using log-gamma.
 
     D_KL(Beta(a1,b1) || Beta(a2,b2)) =
@@ -170,6 +166,7 @@ def beta_kl_divergence(
 
     Uses finite differences of lgamma to approximate the digamma function.
     """
+
     # ln B(a,b) = lgamma(a) + lgamma(b) - lgamma(a+b)
     def log_beta(a: float, b: float) -> float:
         return math.lgamma(a) + math.lgamma(b) - math.lgamma(a + b)
@@ -188,7 +185,8 @@ def beta_kl_divergence(
     psi_ab1 = digamma(alpha1 + beta1)
 
     return (
-        lb2 - lb1
+        lb2
+        - lb1
         + (alpha1 - alpha2) * psi_a1
         + (beta1 - beta2) * psi_b1
         + (alpha2 + beta2 - alpha1 - beta1) * psi_ab1
@@ -323,7 +321,6 @@ class InformationTheoryService:
         max_prune = int(len(nodes) * max_prunable_ratio)
         return [nid for nid, _ in prunable[:max_prune]]
 
-
     def calculate_renyi_entropy(
         self,
         probabilities: list[float],
@@ -342,9 +339,7 @@ class InformationTheoryService:
         elif alpha > 1e6:
             special_case = "min_entropy"
 
-        return RenyiEntropyResult(
-            entropy=ent, alpha=alpha, special_case=special_case
-        )
+        return RenyiEntropyResult(entropy=ent, alpha=alpha, special_case=special_case)
 
     def calculate_kl_divergence(
         self,

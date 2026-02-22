@@ -115,9 +115,7 @@ class StigmergyService:
         self._trails[edge_id] = trail
         return trail
 
-    def evaporate(
-        self, evaporation_rate: float | None = None
-    ) -> int:
+    def evaporate(self, evaporation_rate: float | None = None) -> int:
         """Evaporate all trails. Returns number of trails affected."""
         if evaporation_rate is None:
             evaporation_rate = get_constant("STIGMERGY_EVAPORATION_RATE")
@@ -127,9 +125,7 @@ class StigmergyService:
 
         for trail in self._trails.values():
             old = trail.intensity
-            trail.intensity = max(
-                pmin, (1 - evaporation_rate) * trail.intensity
-            )
+            trail.intensity = max(pmin, (1 - evaporation_rate) * trail.intensity)
             if trail.intensity != old:
                 affected += 1
 
@@ -156,9 +152,7 @@ class StigmergyService:
             active_trails=active,
         )
 
-    def get_pheromone_gradient(
-        self, edge_ids: list[str]
-    ) -> list[tuple[str, float]]:
+    def get_pheromone_gradient(self, edge_ids: list[str]) -> list[tuple[str, float]]:
         """Get pheromone gradient for a subset of edges."""
         intensities = {}
         for eid in edge_ids:

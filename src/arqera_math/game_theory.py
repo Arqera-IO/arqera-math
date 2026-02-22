@@ -145,23 +145,18 @@ class ResourceAuction:
         sorted_claims = sorted(claims, key=lambda c: c.score, reverse=True)
 
         winner = sorted_claims[0]
-        reasoning.append(
-            f"Winner: Agent {winner.agent_id} with score {winner.score:.3f}"
-        )
+        reasoning.append(f"Winner: Agent {winner.agent_id} with score {winner.score:.3f}")
 
         # Check for ties (within 0.01)
         if len(sorted_claims) > 1:
             second = sorted_claims[1]
             if abs(winner.score - second.score) < 0.01:
                 reasoning.append(
-                    f"Near-tie with Agent {second.agent_id} "
-                    f"(score {second.score:.3f})"
+                    f"Near-tie with Agent {second.agent_id} (score {second.score:.3f})"
                 )
                 if second.claimed_at < winner.claimed_at:
                     winner = second
-                    reasoning.append(
-                        f"Tiebreaker: Agent {winner.agent_id} claimed earlier"
-                    )
+                    reasoning.append(f"Tiebreaker: Agent {winner.agent_id} claimed earlier")
 
         return AuctionResult(
             resource_id=resource_id,

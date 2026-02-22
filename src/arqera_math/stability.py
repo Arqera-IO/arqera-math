@@ -36,9 +36,7 @@ class StabilityAnalysis:
         }
 
 
-def lyapunov_function(
-    state: list[float], equilibrium: list[float]
-) -> float:
+def lyapunov_function(state: list[float], equilibrium: list[float]) -> float:
     """Compute Lyapunov function value.
 
     V(P) = 0.5 * sum((P_j - P_j*)^2)
@@ -48,12 +46,9 @@ def lyapunov_function(
     """
     if len(state) != len(equilibrium):
         raise ValueError(
-            f"State dimension {len(state)} != equilibrium dimension "
-            f"{len(equilibrium)}"
+            f"State dimension {len(state)} != equilibrium dimension {len(equilibrium)}"
         )
-    return 0.5 * sum(
-        (s - e) ** 2 for s, e in zip(state, equilibrium, strict=True)
-    )
+    return 0.5 * sum((s - e) ** 2 for s, e in zip(state, equilibrium, strict=True))
 
 
 def check_stability(
@@ -80,10 +75,7 @@ def check_stability(
     v_values = [lyapunov_function(s, equilibrium) for s in state_history]
 
     # Compute derivatives (V_dot approximation)
-    v_dots = [
-        v_values[i + 1] - v_values[i]
-        for i in range(len(v_values) - 1)
-    ]
+    v_dots = [v_values[i + 1] - v_values[i] for i in range(len(v_values) - 1)]
 
     # Use the last window_size derivatives for stability assessment
     recent_window = min(window_size, len(v_dots))
@@ -113,9 +105,7 @@ class StabilityService:
     Tracks system state over time and provides stability analysis.
     """
 
-    def lyapunov_function(
-        self, state: list[float], equilibrium: list[float]
-    ) -> float:
+    def lyapunov_function(self, state: list[float], equilibrium: list[float]) -> float:
         """Compute Lyapunov function value."""
         return lyapunov_function(state, equilibrium)
 

@@ -102,6 +102,4 @@ class QuorumSensingService:
         coefficient: float | None = None,
     ) -> list[QuorumResponse]:
         """Evaluate multiple signals."""
-        return [
-            self.evaluate_signal(s, threshold, coefficient) for s in signals
-        ]
+        return [self.evaluate_signal(s, threshold, coefficient) for s in signals]

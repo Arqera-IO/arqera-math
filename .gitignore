@@ -50,3 +50,6 @@ htmlcov/
 CLAUDE.md
 AGENTS.md
 codex.md
+.cursorrules
+.windsurfrules
+.github/copilot-instructions.md

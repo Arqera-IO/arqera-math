@@ -33,5 +33,5 @@ jobs:
       - uses: astral-sh/setup-uv@v5
       - run: |
           uv venv --python ${{ matrix.python-version }} .test-venv
-          .test-venv/bin/pip install -e ".[dev]"
+          VIRTUAL_ENV=.test-venv uv pip install -e ".[dev]"
           .test-venv/bin/pytest tests/ -v --tb=short

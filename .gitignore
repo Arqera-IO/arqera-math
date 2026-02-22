@@ -1,11 +1,52 @@
+# Python
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 *.egg-info/
+*.egg
 dist/
 build/
 .eggs/
+
+# Virtual environments
 .venv/
 venv/
+env/
+
+# Environment files
 .env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Ruff
+.ruff_cache/
+
+# Build artifacts
+*.whl
+*.tar.gz
+
+# Session/internal files (never commit)
+.session-state.yaml
+.secrets.yaml
+
+# Internal development notes (not for public repo)
+CLAUDE.md
+AGENTS.md
+codex.md

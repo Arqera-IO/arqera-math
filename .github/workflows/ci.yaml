@@ -18,9 +18,11 @@ jobs:
       - uses: astral-sh/ruff-action@v3
         with:
           args: check src/
+          src: "."
       - uses: astral-sh/ruff-action@v3
         with:
           args: format --check src/
+          src: "."
 
   test:
     name: Test (Python ${{ matrix.python-version }})

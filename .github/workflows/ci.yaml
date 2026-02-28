@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v7
       - run: |
           uv venv .lint-venv --python 3.12
           VIRTUAL_ENV=.lint-venv uv pip install -e ".[dev]"
@@ -30,7 +30,7 @@ jobs:
         python-version: ["3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v7
       - run: |
           uv venv .test-venv --python ${{ matrix.python-version }}
           VIRTUAL_ENV=.test-venv uv pip install -e ".[dev]"
